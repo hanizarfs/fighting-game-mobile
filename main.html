@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Fighting Arena</title>
+
+    <link rel="icon" type="image/x-icon" href="./images2/fav1.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: "Press Start 2P", cursive;
+      }
+
+      /* Styling for player controls */
+
+      /* Styling for player controls */
+      .player-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .direction-controls {
+        display: flex;
+        gap: 10px;
+      }
+
+      .player-controls button {
+        width: 100px;
+        height: 100px;
+        border: 4px solid #ddd;
+        border-radius: 50%;
+        background-color: #aaa;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .attack-button {
+        width: 100px;
+        height: 50px;
+        border: 4px solid #ddd;
+        background-color: #aaa;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      /* Styling for main menu and new game buttons */
+
+      .menu-buttons input[type="button"] {
+        height: 50px;
+        margin: 0 10px;
+        font-size: 18px;
+        font-weight: bold;
+        border: 4px solid black;
+        background-color: #aaa;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- red container  -->
+    <div style="position: relative; display: inline-block">
+      <!-- smaller red container  -->
+      <div
+        style="
+          position: absolute;
+          display: flex;
+          width: 100%;
+          align-items: center;
+          padding: 20px;
+        "
+      >
+        <!-- player health -->
+
+        <div
+          style="
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 4px solid white;
+            border-bottom: 4px solid white;
+            border-left: 4px solid white;
+          "
+        >
+          <div style="background-color: red; height: 30px; width: 100%"></div>
+
+          <div
+            id="playerhealth"
+            style="
+              position: absolute;
+              background-color: #818cf8;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              width: 100%;
+            "
+          ></div>
+        </div>
+
+        <!-- timer -->
+
+        <div
+          id="timer"
+          style="
+            background-color: black;
+            height: 50px;
+            width: 90px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 4px solid white;
+          "
+        >
+          /* border-top:4px solid white; border-bottom:4px solid white;"> */ 10
+        </div>
+
+        <!-- enemy health  -->
+
+        <div
+          style="
+            position: relative;
+            border-top: 4px solid white;
+            border-bottom: 4px solid white;
+            border-right: 4px solid white;
+            width: 100%;
+          "
+        >
+          <div style="background-color: red; height: 30px"></div>
+
+          <div
+            id="enemyhealth"
+            style="
+              position: absolute;
+              background-color: #818cf8;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div
+        id="RESULT"
+        style="
+          position: absolute;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: none;
+        "
+      >
+        TIE
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <!-- button to restart the game -->
+
+    <div style="display: flex; justify-content: space-between">
+      <!-- Player 1 controls -->
+      <div class="player-controls">
+        <button id="p1-jump">Jump</button>
+        <div class="direction-controls">
+          <button id="p1-left">Left</button>
+          <button id="p1-right">Right</button>
+        </div>
+        <button id="p1-attack" class="attack-button">Attack</button>
+      </div>
+
+      <div class="menu-buttons">
+        <input type="button" onclick="redirectToIndex()" value="Main Menu" />
+        <input type="button" onclick="reloadme()" value="New Game" />
+      </div>
+
+      <!-- Player 2 controls -->
+      <div class="player-controls">
+        <button id="p2-jump">Jump</button>
+        <div class="direction-controls">
+          <button id="p2-left">Left</button>
+          <button id="p2-right">Right</button>
+        </div>
+        <button id="p2-attack" class="attack-button">Attack</button>
+      </div>
+    </div>
+
+    <script>
+      function redirectToIndex() {
+        window.location.href = "index.html";
+      }
+
+      // Player 1 controls
+      document
+        .getElementById("p1-left")
+        .addEventListener("touchstart", function () {
+          keys.a.pressed = true;
+          player.lastkey = "a";
+        });
+      document
+        .getElementById("p1-left")
+        .addEventListener("touchend", function () {
+          keys.a.pressed = false;
+        });
+
+      document
+        .getElementById("p1-right")
+        .addEventListener("touchstart", function () {
+          keys.d.pressed = true;
+          player.lastkey = "d";
+        });
+      document
+        .getElementById("p1-right")
+        .addEventListener("touchend", function () {
+          keys.d.pressed = false;
+        });
+
+      document
+        .getElementById("p1-jump")
+        .addEventListener("touchstart", function () {
+          player.velocity.y = -20;
+        });
+
+      document
+        .getElementById("p1-attack")
+        .addEventListener("touchstart", function () {
+          player.attack();
+        });
+
+      // Player 2 controls
+      document
+        .getElementById("p2-left")
+        .addEventListener("touchstart", function () {
+          keys.ArrowLeft.pressed = true;
+          enemy.lastkey = "ArrowLeft";
+        });
+      document
+        .getElementById("p2-left")
+        .addEventListener("touchend", function () {
+          keys.ArrowLeft.pressed = false;
+        });
+
+      document
+        .getElementById("p2-right")
+        .addEventListener("touchstart", function () {
+          keys.ArrowRight.pressed = true;
+          enemy.lastkey = "ArrowRight";
+        });
+      document
+        .getElementById("p2-right")
+        .addEventListener("touchend", function () {
+          keys.ArrowRight.pressed = false;
+        });
+
+      document
+        .getElementById("p2-jump")
+        .addEventListener("touchstart", function () {
+          enemy.velocity.y = -20;
+        });
+
+      document
+        .getElementById("p2-attack")
+        .addEventListener("touchstart", function () {
+          enemy.attack();
+        });
+    </script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+      integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script src="js/utils.js"></script>
+    <script src="js/classes.js"></script>
+    <script src="sound/sound.js"></script>
+    <script src="index.js"></script>
+
+    <!-- <script src="sound/sound.js"></script> -->
+  </body>
+</html>
